@@ -1,13 +1,3 @@
-111111
-
-
-
-
-
-
-
-
-
 #include <fstream>
 #include <iostream>
 #include <locale.h>
