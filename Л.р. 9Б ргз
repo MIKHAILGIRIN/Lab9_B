@@ -1,0 +1,202 @@
+#include <fstream>
+#include <iostream>
+#include <locale.h>
+#include <stdlib.h>
+using namespace std;
+struct LIST {
+    int number;
+    LIST* next;
+};
+
+struct LIST2 {
+    int number;
+    LIST2* next;
+};
+
+void read_list(LIST*& lst,LIST2*& lst2)
+{
+    LIST* p;
+    int t;
+
+    ifstream f1("f1.txt");
+    if (f1)
+    {
+        f1 >> t;
+        if (!f1.eof())
+        {
+            lst = new LIST;
+            p = lst;
+            p->number = t;
+            f1 >> t;
+            while (!f1.eof())
+            {
+                p->next = new LIST;
+                p = p->next;
+                p->number = t;
+                f1 >> t;
+            }
+			p->next = new LIST;
+            p = p->next;
+            p->number = t;
+            p->next = NULL;
+        }
+        else
+        {
+            cout << "Файл 1 пустой" << '\n';
+        }
+    }
+    else
+    {
+        cout << "Файл 1 отсутствует" << '\n';
+    }
+    f1.close();
+
+    LIST2* p2;
+    ifstream f2("f2.txt");
+    if (f2)
+    {
+        f2 >> t;
+        if (!f2.eof())
+        {
+            lst2 = new LIST2;
+            p2 = lst2;
+            p2->number = t;
+            f2 >> t;
+            while (!f2.eof())
+            {
+                p2->next = new LIST2;
+                p2 = p2->next;
+                p2->number = t;
+                f2 >> t;
+            }
+			p2->next = new LIST2;
+            p2 = p2->next;
+            p2->number = t;
+            p2->next = NULL;
+        }
+        else
+            cout << "Файл 2 пустой" << '\n';
+    }
+    else
+    {
+        cout << "Файл 2 отсутствует" << '\n';
+    }
+    f2.close();
+}
+
+void print_list(LIST* lst,LIST2* lst2)
+{
+    LIST* p = lst;
+    cout << "Элементы полученного списка из 1го файла: ";
+    do {
+        cout << p->number << " ";
+        p = p->next;
+    } while (p != NULL);
+    cout << "\n";
+    LIST2* p2 = lst2;
+    cout << "Элементы полученного списка из 2го файла: ";
+    do {
+        cout << p2->number << " ";
+        p2 = p2->next;
+    } while (p2 != NULL);
+    cout << "\n";
+}
+
+
+void out_el(LIST*& p1, LIST*& lst, LIST*& prev, LIST2*& p3, LIST2*& lst2, LIST2*& prev2, int i)
+{
+    if (i == 1)
+    {
+        cout << p1->number << " ";
+        if (p1 == lst) lst = NULL;
+        else prev->next = NULL;
+        delete p1;
+    }
+    else
+    {
+        cout << p3->number << " ";
+        if (p3 == lst2) lst2 = NULL;
+        else prev2->next = NULL;
+        delete p3;
+    }
+}
+
+void write_list(LIST* lst, LIST2* lst2)
+{
+    ofstream f;
+    LIST* p1 = lst, * p2, * prev;
+    LIST2* p3 = lst2, * p4, * prev2;
+    cout << "Отсортированные элементы: ";
+    f.open("f3.txt");
+    while (p1 != NULL || p3 != NULL)
+    {
+        prev = lst;
+        prev2 = lst2;
+        if (p1 != NULL)
+        {
+            p2 = p1->next;
+            while (p2)
+            {
+                prev = p1;
+                p1 = p1->next;
+                p2 = p2->next;
+            }
+        }
+
+        if (p3 != NULL)
+        {
+            p4 = p3->next;
+            while (p4)
+            {
+                prev2 = p3;
+                p3 = p3->next;
+                p4 = p4->next;
+            }
+        }
+
+        if ((p1 != NULL) && (p3 != NULL))
+        {
+            if (p1->number > p3->number)
+            {
+                f << p1->number << ' ';
+                out_el(p1, lst, prev, p3, lst2, prev2, 1);
+            }
+            else
+            {
+                f << p3->number << ' ';
+                out_el(p1, lst, prev, p3, lst2, prev2, 0);
+            }
+        }
+        else
+        {
+            if (p1 != NULL)
+            {
+                f << p1->number << ' ';
+                out_el(p1, lst, prev, p3, lst2, prev2, 1);
+            }
+            else
+            {
+                f << p3->number << ' ';
+                out_el(p1, lst, prev, p3, lst2, prev2, 0);
+            }
+        }
+
+        p1 = lst;
+        p3 = lst2;
+    }
+    f.close();
+}
+
+
+int main()
+{
+    LIST* lst = NULL;
+    LIST2* lst2 = NULL;
+    setlocale(LC_CTYPE, "");
+    read_list(lst,lst2);
+    if ((lst != NULL) && (lst2 != NULL))
+    {
+        print_list(lst,lst2);
+        write_list(lst,lst2);
+    }
+}
