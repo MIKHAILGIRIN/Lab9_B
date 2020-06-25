@@ -190,8 +190,7 @@ void write_list(LIST* lst, LIST2* lst2)
 
 int main()
 {
-    LIST* lst = NULL;
-    LIST2* lst2 = NULL;
+    LIST* lst = NULL;    LIST2* lst2 = NULL;
     setlocale(LC_CTYPE, "");
     read_list(lst,lst2);
     if ((lst != NULL) && (lst2 != NULL))
